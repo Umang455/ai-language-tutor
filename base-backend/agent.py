@@ -9,14 +9,12 @@ from livekit import agents, rtc
 from livekit.agents import AgentSession, Agent, RoomInputOptions
 from livekit.plugins import (
     openai,
+    google,             # <-- use the Google plugin (provides Gemini support)
     cartesia,
     deepgram,
     noise_cancellation,
     silero,
-    # groq,
-    cartesia,
     sarvam,
-    # speechify,
 )
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
@@ -108,7 +106,6 @@ NATIVE_GREETING_TEMPLATES = {
     'pt': "Olá {user_name}! Sou seu tutor pessoal de idiomas com IA. Estou animado para ajudá-lo a aprender {target_lang_name} praticando conversas sobre {scenario}. Vamos começar!",
 }
 
-
 def get_native_greeting(
     lang_code: str, target_lang_name: str, user_name: str, scenario: str
 ) -> str:
@@ -117,7 +114,6 @@ def get_native_greeting(
     return template.format(
         user_name=user_name, target_lang_name=target_lang_name, scenario=scenario
     )
-
 
 def extract_language_from_room_name(room_name: str) -> dict:
     """Extract language codes from room name"""
@@ -250,7 +246,8 @@ async def entrypoint(ctx: agents.JobContext):
             language=stt_lang,
             model="saarika:v2.5",
         ),
-        llm=openai.LLM(model="gpt-4o-mini"),
+        # Use google.LLM(...) from livekit.plugins.google for Gemini
+        llm=google.LLM(model="gemini-2.0-flash"),   # <-- updated here
         tts=sarvam.TTS(
             target_language_code=tts_lang,
             speaker="abhilash",
@@ -263,10 +260,7 @@ async def entrypoint(ctx: agents.JobContext):
         room=ctx.room,
         agent=LanguageTutorAgent(instructions=instructions),
         room_input_options=RoomInputOptions(
-            # LiveKit Cloud enhanced noise cancellation
-            # - If self-hosting, omit this parameter
-            # - For telephony applications, use `BVCTelephony` for best results
-            noise_cancellation=noise_cancellation.BVC(), 
+            noise_cancellation=noise_cancellation.BVC(),
         ),
     )
 
