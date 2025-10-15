@@ -1,13 +1,20 @@
-import { Public_Sans } from 'next/font/google';
+import { Poppins, Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import { ApplyThemeScript, ThemeToggle} from '@/components/theme-toggle';
 import { getAppConfig, getOrigin } from '@/lib/utils';
 import './globals.css';
 
-const publicSans = Public_Sans({
-  variable: '--font-public-sans',
+const poppins = Poppins({
+  variable: '--font-poppins',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+});
+
+const montserrat = Montserrat({
+  variable: '--font-montserrat',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
 });
 
 const commitMono = localFont({
@@ -61,7 +68,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ApplyThemeScript />
       </head>
       <body
-        className={`${publicSans.variable} ${commitMono.variable} overflow-x-hidden antialiased`}
+        className={`${poppins.variable} ${montserrat.variable} ${commitMono.variable} overflow-x-hidden antialiased`}
       >
         {children}
         <div className="group fixed bottom-0 left-1/2 z-50 mb-2 -translate-x-1/2">
